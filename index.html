@@ -3,15 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Deadwood TBJ — Evidence Redirect</title>
+<title>TBJ Evidence Clip</title>
 <style>
-  body { font-family: -apple-system, sans-serif; text-align: center;
-         padding: 40px 20px; color: #666; background: #fafafa; }
-  .note { font-size: 12px; margin-top: 30px; color: #aaa; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,sans-serif;background:#f5f5f5;
+       min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:white;border-radius:12px;padding:24px;max-width:420px;width:100%;
+         box-shadow:0 2px 12px rgba(0,0,0,0.1)}
+  .label{font-size:11px;font-weight:600;color:#8B0000;text-transform:uppercase;
+          letter-spacing:.08em;margin-bottom:4px}
+  .who{font-size:20px;font-weight:700;color:#111;margin-bottom:2px}
+  .show{font-size:13px;color:#555;margin-bottom:16px}
+  .quote{background:#f9f9f9;border-left:3px solid #8B0000;padding:10px 12px;
+          border-radius:0 6px 6px 0;font-style:italic;font-size:13px;
+          color:#333;margin-bottom:20px;line-height:1.5}
+  .btn{display:block;width:100%;padding:14px;background:#8B0000;color:white;
+        border:none;border-radius:8px;font-size:16px;font-weight:600;
+        cursor:pointer;text-align:center;margin-bottom:12px}
+  .btn:active{background:#6B0000}
+  .btn.copied{background:#2d7a2d}
+  .instructions{font-size:12px;color:#888;text-align:center;line-height:1.5;
+                  margin-bottom:16px}
+  .url-box{background:#f0f0f0;border-radius:6px;padding:10px;
+            font-size:10px;color:#555;word-break:break-all;line-height:1.5}
+  .note{font-size:10px;color:#bbb;text-align:center;margin-top:16px}
+  #status{height:16px;text-align:center;font-size:12px;color:#2d7a2d;
+           font-weight:600;margin-bottom:8px}
 </style>
 </head>
 <body>
-<p>Redirecting to evidence clip&#8230;</p>
+<div class="card">
+  <div id="content">
+    <div class="label">Deadwood TBJ — Evidence Clip</div>
+    <div class="who" id="who">Loading…</div>
+    <div class="show" id="show"></div>
+    <div class="quote" id="quote"></div>
+    <div id="status"></div>
+    <button class="btn" id="btn" onclick="copyLink()">📋&nbsp; Copy Rumble Link</button>
+    <div class="instructions">
+      After copying, open a new tab in Safari<br>and paste into the address bar.
+    </div>
+    <div class="url-box" id="url-box"></div>
+    <div class="note">Deadwood Trial By Jury · satirical prop · not a real legal proceeding</div>
+  </div>
+  <div id="error" style="display:none;text-align:center;color:#888;padding:20px">
+    <p>Clip not found.</p>
+  </div>
+</div>
 <script>
 const URLS = {
   1: "https://rumble.com/v78t5m6-the-daily-herold-42126.html?e9s=src_v1_ucp_a&start=620s",
@@ -64,16 +102,93 @@ const URLS = {
   48: "https://rumble.com/v79xuoo-devolution-power-hour-ep.-458.html?e9s=src_v1_ucp_a&start=935s",
   49: "https://rumble.com/v7a40x8-badlands-daily-52026.html?e9s=src_v1_ucp_a&start=2234s",
 };
+const INFO = {
+  1: {show: "The Daily Herold", date: "April 21, 2026", who: "JON HEROLD", snippet: "And it\'s funny because they\'re like voting on it right in an election, but our e…"},
+  2: {show: "The Daily Herold", date: "April 22, 2026", who: "JON HEROLD", snippet: "I mean, again, elections are fake, so analyzing fake elections is kind of retard…"},
+  3: {show: "The Daily Herold", date: "April 22, 2026", who: "JON HEROLD", snippet: "Elections are fake. They always have been."},
+  4: {show: "The Daily Herold", date: "April 23, 2026", who: "JON HEROLD", snippet: "The voting is rigged."},
+  5: {show: "The Daily Herold", date: "April 24, 2026", who: "JON HEROLD", snippet: "Because the election was stolen."},
+  6: {show: "The Daily Herold", date: "April 28, 2026", who: "JON HEROLD", snippet: "America\'s elections are rigged, stolen and a laughingstock all over the world."},
+  7: {show: "The Daily Herold", date: "May 1, 2026", who: "JON HEROLD", snippet: "In perpetuating the election fraud none of those groups have actually done..."},
+  8: {show: "The Daily Herold", date: "May 7, 2026", who: "JON HEROLD", snippet: "To have an election stolen from you when you\'re running for president and the si…"},
+  9: {show: "The Daily Herold", date: "May 12, 2026", who: "JON HEROLD", snippet: "I believe he had it stolen, too. And obviously, Kari Lake\'s race was stolen from…"},
+  10: {show: "The Daily Herold", date: "April 21, 2026", who: "JON HEROLD", snippet: "Our election systems are not fixed."},
+  11: {show: "Devolution Power Hour Ep. 451", date: "April 21, 2026", who: "JON HEROLD", snippet: "Election was stolen in 2020."},
+  12: {show: "Devolution Power Hour Ep. 451", date: "April 21, 2026", who: "JON HEROLD", snippet: "The fraudulent voting system."},
+  13: {show: "Devolution Power Hour Ep. 456", date: "May 8, 2026", who: "JON HEROLD", snippet: "I\'ve always said like, yes, elections have always had rigged."},
+  14: {show: "Badlands Daily", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "Because the elections aren\'t real."},
+  15: {show: "Badlands Daily", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "This is all based on fake elections."},
+  16: {show: "Badlands Daily", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "That solutions can come legislatively from winning elections. First off, the ele…"},
+  17: {show: "Badlands Daily", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "Elections are fake. It\'s really just a narrative battle."},
+  18: {show: "Devolution Power Hour Ep. 454", date: "May 1, 2026", who: "CHRIS PAUL", snippet: "So that the entire country would understand immediately that we have fake electi…"},
+  19: {show: "Badlands Daily", date: "May 1, 2026", who: "CHRIS PAUL", snippet: "A, we have a uniparty, and B, we have fake elections."},
+  20: {show: "Badlands Daily", date: "May 8, 2026", who: "CHRIS PAUL", snippet: "We are doing this on the basis that it\'s going to influence the outcome of fake …"},
+  21: {show: "Devolution Power Hour Ep. 456", date: "May 8, 2026", who: "CHRIS PAUL", snippet: "They could have stolen the election in 2016. Elections are fake. Yeah. Elections…"},
+  22: {show: "Devolution Power Hour Ep. 458", date: "May 13, 2026", who: "CHRIS PAUL", snippet: "I think that in an era of fake elections, if elections are only battles, they\'re…"},
+  23: {show: "Badlands Daily", date: "May 22, 2026", who: "CHRIS PAUL", snippet: "Elections are fake."},
+  24: {show: "Badlands Daily", date: "May 22, 2026", who: "CHRIS PAUL", snippet: "You don\'t actually get out of that situation by winning fake elections... and th…"},
+  25: {show: "Badlands Daily", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "Selling the self-deluding psyop that is an American election."},
+  26: {show: "Devolution Power Hour Ep. 452", date: "April 24, 2026", who: "CHRIS PAUL", snippet: "Trying to win a fake election rather than..."},
+  27: {show: "Badlands Daily", date: "April 21, 2026", who: "ASHE IN AMERICA", snippet: "And I wonder how did this happen. How did you get — like, we\'re going to have ev…"},
+  28: {show: "Badlands Daily", date: "April 21, 2026", who: "ASHE IN AMERICA", snippet: "So election — fake election — elections are fake. That\'s how. Yeah."},
+  29: {show: "Badlands Daily", date: "April 21, 2026", who: "ASHE IN AMERICA", snippet: "This is why elections are fake, not just rigged, not just manipulated."},
+  30: {show: "Badlands Daily", date: "April 21, 2026", who: "ASHE IN AMERICA", snippet: "Elections are fake. If elections are fake, we didn\'t consent for any of these pe…"},
+  31: {show: "Why We Vote Ep. 171", date: "April 28, 2026", who: "ASHE IN AMERICA", snippet: "Actually, the evidence of election fraud has been prevented from being shown in …"},
+  32: {show: "Why We Vote Ep. 171", date: "April 28, 2026", who: "ASHE IN AMERICA", snippet: "So the system is rigged."},
+  33: {show: "Why We Vote Ep. 174", date: "May 13, 2026", who: "ASHE IN AMERICA", snippet: "If elections are stolen, then they do not legitimately have our consent to be go…"},
+  34: {show: "Why We Vote Ep. 174", date: "May 20, 2026", who: "ASHE IN AMERICA", snippet: "Because the process is manipulated, rigged, fake, whatever, then it doesn\'t actu…"},
+  35: {show: "Badlands Daily", date: "May 13, 2026", who: "ASHE IN AMERICA", snippet: "Elections are fake, so we don\'t actually know historically how the black communi…"},
+  36: {show: "Badlands Daily", date: "May 13, 2026", who: "ASHE IN AMERICA", snippet: "That we\'re being told that we\'re suppressing the vote, but it\'s not the vote. It…"},
+  37: {show: "Badlands Daily", date: "May 13, 2026", who: "ASHE IN AMERICA", snippet: "2012, that he should have been voted out. But elections are fake. So that didn\'t…"},
+  38: {show: "Badlands Daily", date: "May 20, 2026", who: "ASHE IN AMERICA", snippet: "I mean, as we talked about before the show, elections are fake."},
+  39: {show: "Why We Vote Ep. 174", date: "May 20, 2026", who: "BRIAN LUPO", snippet: "Obviously, I\'ll never stop uncovering fraud, especially while we still have..."},
+  40: {show: "Badlands Daily", date: "April 30, 2026", who: "BRIAN LUPO", snippet: "Voting isn\'t gay. Voting is fake."},
+  41: {show: "Why We Vote Ep. 171", date: "April 28, 2026", who: "BRIAN LUPO", snippet: "Elections are fake."},
+  42: {show: "Badlands Daily", date: "May 22, 2026", who: "BRIAN LUPO", snippet: "Let me explain. We have fake elections."},
+  43: {show: "Badlands Daily", date: "April 28, 2026", who: "GHOST OF BASED PATRICK HENRY", snippet: "[Co-occurring with LUPO] That is some of the best proof in the world that electi…"},
+  44: {show: "Badlands Daily", date: "April 24, 2026", who: "BRIAN LUPO", snippet: "And again, elections are fake."},
+  45: {show: "Badlands Daily", date: "May 20, 2026", who: "BRIAN LUPO", snippet: "And also elections are fake."},
+  46: {show: "Geopolitics with Ghost Ep. 105", date: "May 7, 2026", who: "GHOST OF BASED PATRICK HENRY", snippet: "But elections are still fake and gay. So as long as elections are fake and gay..…"},
+  47: {show: "The Narrative Ep. 66", date: "April 26, 2026", who: "BURNING BRIGHT", snippet: "Voting in fake elections is retarded."},
+  48: {show: "Devolution Power Hour Ep. 458", date: "May 13, 2026", who: "JON & CHRIS", snippet: "Race in the middle of fake elections."},
+  49: {show: "Badlands Daily", date: "May 20, 2026", who: "ASHE & BRIAN", snippet: "It\'s such an absurd system. Democracy via algorithm. Yes. Pretty much an algorit…"},
+};
+
 const p = new URLSearchParams(window.location.search);
 const n = parseInt(p.get('r'), 10);
-if (URLS[n]) {
-  window.location.replace(URLS[n]);
+
+if (URLS[n] && INFO[n]) {
+  const info = INFO[n];
+  document.getElementById('who').textContent = info.who;
+  document.getElementById('show').textContent = info.show + ' · ' + info.date;
+  document.getElementById('quote').textContent = '\u201c' + info.snippet + '\u201d';
+  document.getElementById('url-box').textContent = URLS[n];
 } else {
-  document.querySelector('p').textContent =
-    'No redirect found. Check your QR code.';
+  document.getElementById('content').style.display = 'none';
+  document.getElementById('error').style.display = 'block';
+}
+
+async function copyLink() {
+  const url = URLS[n];
+  if (!url) return;
+  const btn = document.getElementById('btn');
+  const status = document.getElementById('status');
+  try {
+    await navigator.clipboard.writeText(url);
+    btn.textContent = '✓  Copied to clipboard!';
+    btn.classList.add('copied');
+    status.textContent = '';
+  } catch(e) {
+    // Fallback: select the URL text
+    const box = document.getElementById('url-box');
+    const range = document.createRange();
+    range.selectNodeContents(box);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    status.textContent = 'Select the link above and copy manually.';
+  }
 }
 </script>
-<noscript><p>JavaScript is required for this redirect.</p></noscript>
-<p class="note">Deadwood Trial By Jury &mdash; satirical prop. Not a real legal proceeding.</p>
 </body>
 </html>
