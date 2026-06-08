@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Deadwood TBJ — Evidence Redirect</title>
+<style>
+  body { font-family: -apple-system, sans-serif; text-align: center;
+         padding: 40px 20px; color: #666; background: #fafafa; }
+  .note { font-size: 12px; margin-top: 30px; color: #aaa; }
+</style>
+</head>
+<body>
+<p>Redirecting to evidence clip&#8230;</p>
+<script>
+const URLS = {
+  1: "https://rumble.com/v78t5m6-the-daily-herold-42126.html?e9s=src_v1_ucp_a&start=620s",
+  2: "https://rumble.com/v78ut6k-the-daily-herold-42226.html?e9s=src_v1_ucp_a&start=517s",
+  3: "https://rumble.com/v78ut6k-the-daily-herold-42226.html?e9s=src_v1_ucp_a&start=2494s",
+  4: "https://rumble.com/v78wfyy-the-daily-herold-42326.html?e9s=src_v1_ucp_a&start=1719s",
+  5: "https://rumble.com/v78y342-the-daily-herold-42426.html?e9s=src_v1_ucp_a&start=1578s",
+  6: "https://rumble.com/v794bbi-the-daily-herold-42826.html?e9s=src_v1_ucp_a&start=2634s",
+  7: "https://rumble.com/v799a54-the-daily-herold-5126.html?e9s=src_v1_ucp_a&start=1085s",
+  8: "https://rumble.com/v79ixlw-the-daily-herold-5726.html?e9s=src_v1_ucp_a&start=646s",
+  9: "https://rumble.com/v79r0sm-the-daily-herold-51226.html?e9s=src_v1_ucp_a&start=827s",
+  10: "https://rumble.com/v78t5m6-the-daily-herold-42126.html?e9s=src_v1_ucp_a&start=1452s",
+  11: "https://rumble.com/v78uzpy-devolution-power-hour-ep.-451.html?e9s=src_v1_ucp_a&start=2374s",
+  12: "https://rumble.com/v78uzpy-devolution-power-hour-ep.-451.html?e9s=src_v1_ucp_a&start=5258s",
+  13: "https://rumble.com/v79m25g-devolution-power-hour-ep.-456.html?e9s=src_v1_ucp_a&start=4578s",
+  14: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=844s",
+  15: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=1774s",
+  16: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=2536s",
+  17: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=2554s",
+  18: "https://rumble.com/v79aovc-devolution-power-hour-ep.-454.html?e9s=src_v1_ucp_a&start=3919s",
+  19: "https://rumble.com/v798i7g-badlands-daily-5126.html?e9s=src_v1_ucp_a&start=1580s",
+  20: "https://rumble.com/v79jtwo-badlands-daily-5826.html?e9s=src_v1_ucp_a&start=3862s",
+  21: "https://rumble.com/v79m25g-devolution-power-hour-ep.-456.html?e9s=src_v1_ucp_a&start=4549s",
+  22: "https://rumble.com/v79xuoo-devolution-power-hour-ep.-458.html?e9s=src_v1_ucp_a&start=1710s",
+  23: "https://rumble.com/v7a7kls-badlands-daily-52226.html?e9s=src_v1_ucp_a&start=4660s",
+  24: "https://rumble.com/v7a7kls-badlands-daily-52226.html?e9s=src_v1_ucp_a&start=4734s",
+  25: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=6583s",
+  26: "https://rumble.com/v78zmoc-devolution-power-hour-ep.-452.html?e9s=src_v1_ucp_a&start=5963s",
+  27: "https://rumble.com/v78u57e-badlands-daily-42126.html?e9s=src_v1_ucp_a&start=1115s",
+  28: "https://rumble.com/v78u57e-badlands-daily-42126.html?e9s=src_v1_ucp_a&start=3537s",
+  29: "https://rumble.com/v78u57e-badlands-daily-42126.html?e9s=src_v1_ucp_a&start=1314s",
+  30: "https://rumble.com/v78u57e-badlands-daily-42126.html?e9s=src_v1_ucp_a&start=4404s",
+  31: "https://rumble.com/v793jzk-why-we-vote-ep.-171.html?e9s=src_v1_ucp_a&start=719s",
+  32: "https://rumble.com/v793jzk-why-we-vote-ep.-171.html?e9s=src_v1_ucp_a&start=3242s",
+  33: "https://rumble.com/v79q7b6-why-we-vote-ep.-174.html?e9s=src_v1_ucp_a&start=5259s",
+  34: "https://rumble.com/v7a2480-why-we-vote-ep.-174.html?e9s=src_v1_ucp_a&start=563s",
+  35: "https://rumble.com/v79s14c-badlands-daily-51326.html?e9s=src_v1_ucp_a&start=1352s",
+  36: "https://rumble.com/v79s14c-badlands-daily-51326.html?e9s=src_v1_ucp_a&start=2429s",
+  37: "https://rumble.com/v79s14c-badlands-daily-51326.html?e9s=src_v1_ucp_a&start=3800s",
+  38: "https://rumble.com/v7a40x8-badlands-daily-52026.html?e9s=src_v1_ucp_a&start=514s",
+  39: "https://rumble.com/v7a2480-why-we-vote-ep.-174.html?e9s=src_v1_ucp_a&start=334s",
+  40: "https://rumble.com/v7970di-badlands-daily-43026.html?e9s=src_v1_ucp_a&start=5509s",
+  41: "https://rumble.com/v793jzk-why-we-vote-ep.-171.html?e9s=src_v1_ucp_a&start=1717s",
+  42: "https://rumble.com/v7a7kls-badlands-daily-52226.html?e9s=src_v1_ucp_a&start=4689s",
+  43: "https://rumble.com/v793nhq-badlands-daily-42826.html?e9s=src_v1_ucp_a&start=7271s",
+  44: "https://rumble.com/v78xac6-badlands-daily-42426.html?e9s=src_v1_ucp_a&start=1695s",
+  45: "https://rumble.com/v7a40x8-badlands-daily-52026.html?e9s=src_v1_ucp_a&start=542s",
+  46: "https://rumble.com/v79js3q-geopolitics-with-ghost-ep.-105.html?e9s=src_v1_ucp_a&start=5169s",
+  47: "https://rumble.com/v790l5m-the-narrative-ep.-66-trump-and-the-new-world-order.html?e9s=src_v1_ucp_a&start=8140s",
+  48: "https://rumble.com/v79xuoo-devolution-power-hour-ep.-458.html?e9s=src_v1_ucp_a&start=935s",
+  49: "https://rumble.com/v7a40x8-badlands-daily-52026.html?e9s=src_v1_ucp_a&start=2234s",
+};
+const p = new URLSearchParams(window.location.search);
+const n = parseInt(p.get('r'), 10);
+if (URLS[n]) {
+  window.location.replace(URLS[n]);
+} else {
+  document.querySelector('p').textContent =
+    'No redirect found. Check your QR code.';
+}
+</script>
+<noscript><p>JavaScript is required for this redirect.</p></noscript>
+<p class="note">Deadwood Trial By Jury &mdash; satirical prop. Not a real legal proceeding.</p>
+</body>
+</html>
