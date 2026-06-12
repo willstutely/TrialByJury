@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>ECPA Statute — Official Download Point</title>
+<style>
+  :root{
+    --paper:#FBFAF5;
+    --ink:#16213C;
+    --rule:#C9C4B4;
+    --stamp:#9B1C1C;
+    --muted:#6B6655;
+    --field:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Times New Roman', Times, Georgia, serif;
+    line-height:1.5;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .mono{font-family:'Courier New', Courier, monospace;}
+
+  /* ---------- underlying download page ---------- */
+  .page{
+    width:100%;
+    max-width:560px;
+    margin:0 auto;
+    padding:28px 20px 40px;
+    flex:1;
+  }
+  .agency{
+    text-align:center;
+    border-bottom:3px double var(--ink);
+    padding-bottom:14px;
+    margin-bottom:18px;
+  }
+  .agency .eyebrow{
+    font-family:'Courier New', Courier, monospace;
+    font-size:11px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .agency h1{
+    font-size:21px;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-top:6px;
+  }
+  .agency .sub{
+    font-style:italic;
+    font-size:14px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .docbox{
+    border:1.5px solid var(--ink);
+    padding:20px 18px;
+    margin-top:22px;
+    position:relative;
+    background:#fff;
+  }
+  .docbox .formno{
+    position:absolute;
+    top:-9px;
+    left:14px;
+    background:#fff;
+    padding:0 8px;
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.14em;
+    color:var(--muted);
+  }
+  .docbox h2{
+    font-size:17px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-bottom:8px;
+  }
+  .docbox p{
+    font-size:14.5px;
+    margin-bottom:14px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    font-family:'Times New Roman', Times, serif;
+    font-size:16px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    text-align:center;
+    text-decoration:none;
+    padding:14px 12px;
+    cursor:pointer;
+    -webkit-appearance:none;
+    border-radius:0;
+  }
+  .btn:active{opacity:.85;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--ink);
+    border-color:var(--rule);
+    text-transform:none;
+    letter-spacing:0;
+    font-style:italic;
+    font-size:14.5px;
+    margin-top:10px;
+  }
+  .notice{
+    margin-top:16px;
+    font-size:12.5px;
+    color:var(--muted);
+    font-style:italic;
+    text-align:center;
+  }
+  footer{
+    text-align:center;
+    padding:16px 20px 26px;
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--stamp);
+  }
+
+  /* ---------- survey modal ---------- */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(22,33,60,.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:50;
+  }
+  .overlay[hidden]{display:none;}
+  .form-card{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    width:100%;
+    max-width:430px;
+    max-height:92vh;
+    overflow-y:auto;
+    box-shadow:6px 6px 0 rgba(22,33,60,.35);
+  }
+  .form-head{
+    border-bottom:2px solid var(--ink);
+    padding:12px 16px 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+  }
+  .form-head .fno{
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.14em;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .form-head .ftitle{
+    font-size:13px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    text-align:right;
+  }
+  .form-body{padding:18px 16px 16px;}
+  .question{
+    font-size:16.5px;
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .expect{
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    padding:12px 2px;
+    margin-bottom:16px;
+  }
+  .expect .label{
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:8px;
+  }
+  .expect p{font-size:14px;margin-bottom:10px;}
+  .expect p:last-child{margin-bottom:0;}
+  .burden{
+    margin-top:14px;
+    font-size:10.5px;
+    line-height:1.45;
+    color:var(--muted);
+    font-style:italic;
+  }
+  label.fieldlabel{
+    display:block;
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text]{
+    width:100%;
+    border:1.5px solid var(--ink);
+    background:var(--field);
+    font-family:'Times New Roman', Times, serif;
+    font-size:17px;
+    padding:12px 10px;
+    border-radius:0;
+    -webkit-appearance:none;
+  }
+  input[type=text]:focus{outline:2px solid var(--stamp);outline-offset:1px;}
+  .err{
+    color:var(--stamp);
+    font-size:13px;
+    margin-top:8px;
+    min-height:1.2em;
+  }
+  .stamp{
+    display:inline-block;
+    border:2px solid var(--stamp);
+    color:var(--stamp);
+    font-family:'Courier New', Courier, monospace;
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    padding:6px 12px;
+    transform:rotate(-3deg);
+    margin:4px 0 14px;
+  }
+  .confirm-name{font-weight:700;}
+  .spin{opacity:.6;pointer-events:none;}
+  @media (prefers-reduced-motion: no-preference){
+    .form-card{animation:drop .22s ease-out;}
+    @keyframes drop{from{transform:translateY(-12px);opacity:0;}to{transform:none;opacity:1;}}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ CONFIG — EDIT THESE TWO LINES ============ -->
+<script>
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoPSy0RPMrixdJWBqjHSR1Sa_cUsg4sa8jtMul3gFVshoidDuC8I0sq1uP67zPgsIt/exec";
+  var PDF_URL    = "TBJ ECPA Statute.pdf"; // path or full URL to the ECPA statute PDF
+</script>
+<!-- ======================================================= -->
+
+<div class="page">
+  <div class="agency">
+    <div class="eyebrow">United States Tribunal for Civic Stability</div>
+    <h1>Office of Electoral Confidence Engagement</h1>
+    <div class="sub">Public Document Distribution Point &mdash; Deadwood, S.D.</div>
+  </div>
+
+  <div class="docbox">
+    <span class="formno">DOC. NO. 26-CR-FAKE-0001-EX</span>
+    <h2>Electoral Confidence Preservation Act</h2>
+    <p>The full text of the ECPA statute is provided below for your mandatory voluntary review. Confidence in the contents of this document is presumed upon download.</p>
+    <a class="btn" id="downloadBtn" href="#">Download the ECPA Statute</a>
+    <div class="notice" id="attestNote" hidden>Your juror attestation is on file. The Tribunal thanks you in advance for your enthusiasm.</div>
+  </div>
+</div>
+
+<footer>This is satire &mdash; not a legal document &middot; Prop / Dramatization</footer>
+
+<!-- ============ JUROR ELIGIBILITY SURVEY MODAL ============ -->
+<div class="overlay" id="overlay" hidden>
+  <div class="form-card" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <div class="form-head">
+      <span class="fno">FORM ECE&#8209;1856&#8209;J</span>
+      <span class="ftitle" id="formTitle">Juror Eligibility Survey</span>
+    </div>
+
+    <!-- STEP 1: the question -->
+    <div class="form-body" id="step1">
+      <p class="question">Click &ldquo;Yes, I will serve&rdquo; to be eligible for Jury Selection.</p>
+
+      <div class="expect">
+        <div class="label">What to expect if selected</div>
+        <p>Selection will be randomized based on the responses to this survey process.</p>
+        <p>Should you be selected you will be provided further instructions at the appropriate time, but you can expect to participate on stage during the deliberation session preceding DPH Live on Saturday Night.</p>
+      </div>
+
+      <button class="btn" id="yesBtn">Yes, I will serve</button>
+      <button class="btn secondary" id="noBtn">Maybe Next Time</button>
+
+      <p class="burden">Paperwork Reduction Notice: completing this survey is estimated to require 11 seconds of civic enthusiasm. Responses are reviewed by no fewer than zero (0) federal officials.</p>
+    </div>
+
+    <!-- STEP 2: name entry -->
+    <div class="form-body" id="step2" hidden>
+      <p class="question">Record of Willing Juror</p>
+      <label class="fieldlabel" for="nameInput">Full name (as it should be read aloud)</label>
+      <input type="text" id="nameInput" maxlength="80" autocomplete="name" enterkeyhint="done">
+      <div class="err" id="nameErr"></div>
+      <button class="btn" id="submitBtn" style="margin-top:6px;">Submit Attestation</button>
+      <button class="btn secondary" id="backBtn">Go back</button>
+    </div>
+
+    <!-- STEP 3: confirmation -->
+    <div class="form-body" id="step3" hidden>
+      <div class="stamp">Received &amp; Filed</div>
+      <p class="question" style="margin-bottom:8px;">Attestation recorded.</p>
+      <p style="font-size:14.5px;margin-bottom:16px;">Thank you, <span class="confirm-name" id="confirmName"></span>. Your name has been entered into the juror roll. If selected, further instructions will reach you at the appropriate time. No further enthusiasm is required at this stage.</p>
+      <button class="btn" id="doneBtn">Proceed to the ECPA Statute</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var FLAG = 'tbj_attested';
+  var qs = new URLSearchParams(location.search);
+  if (qs.get('reset') === '1') { try { localStorage.removeItem(FLAG); } catch(e){} }
+
+  var overlay = document.getElementById('overlay');
+  var step1 = document.getElementById('step1');
+  var step2 = document.getElementById('step2');
+  var step3 = document.getElementById('step3');
+  var nameInput = document.getElementById('nameInput');
+  var nameErr = document.getElementById('nameErr');
+  var submitBtn = document.getElementById('submitBtn');
+  var attestNote = document.getElementById('attestNote');
+
+  document.getElementById('downloadBtn').setAttribute('href', PDF_URL);
+
+  var attested = false;
+  try { attested = localStorage.getItem(FLAG) === '1'; } catch(e){}
+
+  if (attested) {
+    attestNote.hidden = false;
+  } else {
+    overlay.hidden = false;
+  }
+
+  function show(step){
+    step1.hidden = step !== 1;
+    step2.hidden = step !== 2;
+    step3.hidden = step !== 3;
+  }
+
+  document.getElementById('noBtn').addEventListener('click', function(){
+    overlay.hidden = true;
+  });
+
+  document.getElementById('yesBtn').addEventListener('click', function(){
+    show(2);
+    setTimeout(function(){ nameInput.focus(); }, 60);
+  });
+
+  document.getElementById('backBtn').addEventListener('click', function(){
+    nameErr.textContent = '';
+    show(1);
+  });
+
+  function submit(){
+    var name = nameInput.value.replace(/\s+/g,' ').trim();
+    if (!name) { nameErr.textContent = 'A name is required to serve.'; return; }
+    if (SCRIPT_URL.indexOf('PASTE_') === 0) {
+      nameErr.textContent = 'Setup incomplete: SCRIPT_URL has not been configured.';
+      return;
+    }
+    nameErr.textContent = '';
+    submitBtn.classList.add('spin');
+    submitBtn.textContent = 'Filing\u2026';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'add', name: name }),
+      redirect: 'follow'
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      if (data && data.ok) {
+        try { localStorage.setItem(FLAG, '1'); } catch(e){}
+        document.getElementById('confirmName').textContent = name;
+        attestNote.hidden = false;
+        show(3);
+      } else {
+        throw new Error((data && data.error) || 'Filing failed.');
+      }
+    })
+    .catch(function(){
+      nameErr.textContent = 'The clerk could not be reached. Check your connection and try again.';
+    })
+    .finally(function(){
+      submitBtn.classList.remove('spin');
+      submitBtn.textContent = 'Submit Attestation';
+    });
+  }
+
+  submitBtn.addEventListener('click', submit);
+  nameInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') { e.preventDefault(); submit(); }
+  });
+
+  document.getElementById('doneBtn').addEventListener('click', function(){
+    overlay.hidden = true;
+  });
+})();
+</script>
+</body>
+</html>

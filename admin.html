@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Clerk's Console — Juror Selection</title>
+<style>
+  :root{
+    --paper:#FBFAF5;
+    --ink:#16213C;
+    --rule:#C9C4B4;
+    --stamp:#9B1C1C;
+    --muted:#6B6655;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Times New Roman', Times, Georgia, serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:24px 18px 50px;}
+  header{
+    text-align:center;
+    border-bottom:3px double var(--ink);
+    padding-bottom:12px;
+    margin-bottom:16px;
+  }
+  header .eyebrow{
+    font-family:'Courier New', Courier, monospace;
+    font-size:10.5px;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  header h1{
+    font-size:19px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-top:5px;
+  }
+  header .caseno{
+    font-family:'Courier New', Courier, monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    font-family:'Times New Roman', Times, serif;
+    font-size:15.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    text-align:center;
+    padding:13px 12px;
+    cursor:pointer;
+    border-radius:0;
+    -webkit-appearance:none;
+    margin-bottom:10px;
+  }
+  .btn:active{opacity:.85;}
+  .btn.secondary{
+    background:transparent;
+    color:var(--ink);
+    border-color:var(--ink);
+  }
+  .btn.quiet{
+    background:transparent;
+    color:var(--muted);
+    border-color:var(--rule);
+    text-transform:none;
+    font-style:italic;
+    font-size:14px;
+  }
+  .meta{
+    font-family:'Courier New', Courier, monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    text-align:center;
+    margin:4px 0 14px;
+    min-height:1.2em;
+  }
+  .err{color:var(--stamp);font-size:13.5px;text-align:center;margin-bottom:12px;min-height:1.2em;}
+
+  .section-label{
+    font-family:'Courier New', Courier, monospace;
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--stamp);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:4px;
+    margin:18px 0 8px;
+  }
+  ol.panel{list-style:none;counter-reset:juror;}
+  ol.panel li{
+    counter-increment:juror;
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:9px 4px;
+    border-bottom:1px dotted var(--rule);
+    font-size:16.5px;
+  }
+  ol.panel li::before{
+    content:counter(juror, decimal-leading-zero);
+    font-family:'Courier New', Courier, monospace;
+    font-size:13px;
+    color:var(--muted);
+    min-width:2.2em;
+  }
+  ol.panel.alts{counter-reset:juror 12;}
+  ol.panel.alts li{color:var(--muted);}
+
+  table.roll{width:100%;border-collapse:collapse;margin-top:6px;}
+  table.roll td{
+    border-bottom:1px dotted var(--rule);
+    padding:9px 4px;
+    font-size:15.5px;
+    vertical-align:middle;
+  }
+  table.roll td.actions{
+    text-align:right;
+    white-space:nowrap;
+    width:1%;
+  }
+  .mini{
+    font-family:'Courier New', Courier, monospace;
+    font-size:11.5px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--ink);
+    color:var(--ink);
+    padding:5px 9px;
+    margin-left:6px;
+    cursor:pointer;
+    border-radius:0;
+    -webkit-appearance:none;
+  }
+  .mini.danger{border-color:var(--stamp);color:var(--stamp);}
+  .empty{
+    text-align:center;
+    font-style:italic;
+    color:var(--muted);
+    padding:24px 0;
+  }
+  footer{
+    text-align:center;
+    padding:18px;
+    font-family:'Courier New', Courier, monospace;
+    font-size:10px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--stamp);
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ CONFIG — EDIT THIS LINE ============ -->
+<script>
+  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoPSy0RPMrixdJWBqjHSR1Sa_cUsg4sa8jtMul3gFVshoidDuC8I0sq1uP67zPgsIt/exec";
+  var DRAW_SIZE = 18; // total names drawn (12 panel + 6 alternates)
+</script>
+<!-- ================================================= -->
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">United States Tribunal for Civic Stability</div>
+    <h1>Clerk&rsquo;s Console &mdash; Juror Selection</h1>
+    <div class="caseno">Case No. 26&#8209;CR&#8209;FAKE&#8209;0001</div>
+  </header>
+
+  <div class="err" id="err"></div>
+
+  <!-- ============ VIEW 1: SELECTION ============ -->
+  <div id="viewSelect">
+    <button class="btn" id="genBtn">Generate List</button>
+    <button class="btn quiet" id="toEditBtn">Edit the juror roll</button>
+    <div class="meta" id="poolMeta"></div>
+    <div id="results"></div>
+  </div>
+
+  <!-- ============ VIEW 2: EDIT ROLL ============ -->
+  <div id="viewEdit" hidden>
+    <button class="btn secondary" id="backBtn">&larr; Back to Selection</button>
+    <button class="btn quiet" id="refreshBtn">Refresh roll</button>
+    <div class="meta" id="rollMeta"></div>
+    <div id="rollList"></div>
+  </div>
+</div>
+
+<footer>Prop / Dramatization &middot; This is satire</footer>
+
+<script>
+(function(){
+  var entries = [];
+  var err = document.getElementById('err');
+  var results = document.getElementById('results');
+  var poolMeta = document.getElementById('poolMeta');
+  var rollMeta = document.getElementById('rollMeta');
+  var rollList = document.getElementById('rollList');
+  var viewSelect = document.getElementById('viewSelect');
+  var viewEdit = document.getElementById('viewEdit');
+  var genBtn = document.getElementById('genBtn');
+
+  function fail(msg){ err.textContent = msg || ''; }
+
+  function api(body){
+    return fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(body),
+      redirect: 'follow'
+    }).then(function(r){ return r.json(); });
+  }
+
+  function load(){
+    fail('');
+    if (SCRIPT_URL.indexOf('PASTE_') === 0) {
+      fail('Setup incomplete: SCRIPT_URL has not been configured.');
+      return Promise.reject();
+    }
+    return fetch(SCRIPT_URL, { redirect:'follow' })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data || !data.ok) throw new Error();
+        entries = data.entries || [];
+        return entries;
+      })
+      .catch(function(){
+        fail('Could not reach the clerk. Check your connection and try again.');
+        throw new Error();
+      });
+  }
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var buf = new Uint32Array(1);
+      crypto.getRandomValues(buf);
+      var j = buf[0] % (i + 1);
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function esc(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function renderDraw(){
+    var drawn = shuffle(entries).slice(0, DRAW_SIZE);
+    var panel = drawn.slice(0, 12);
+    var alts = drawn.slice(12);
+    var html = '';
+    if (panel.length) {
+      html += '<div class="section-label">Empaneled Jurors (1&ndash;12)</div><ol class="panel">';
+      panel.forEach(function(p){ html += '<li>' + esc(p.name) + '</li>'; });
+      html += '</ol>';
+    }
+    if (alts.length) {
+      html += '<div class="section-label">Alternates (13&ndash;18)</div><ol class="panel alts">';
+      alts.forEach(function(p){ html += '<li>' + esc(p.name) + '</li>'; });
+      html += '</ol>';
+    }
+    results.innerHTML = html;
+    poolMeta.textContent = 'Drawn ' + drawn.length + ' of ' + entries.length + ' on the roll';
+    if (entries.length < DRAW_SIZE) {
+      poolMeta.textContent += ' \u2014 pool smaller than ' + DRAW_SIZE;
+    }
+    genBtn.textContent = 'Reshuffle';
+  }
+
+  genBtn.addEventListener('click', function(){
+    genBtn.disabled = true;
+    load().then(function(){
+      if (!entries.length) {
+        results.innerHTML = '<div class="empty">The juror roll is empty. No willing citizens yet.</div>';
+        poolMeta.textContent = '';
+      } else {
+        renderDraw();
+      }
+    }).catch(function(){}).finally(function(){ genBtn.disabled = false; });
+  });
+
+  /* ---------- edit view ---------- */
+  function renderRoll(){
+    if (!entries.length) {
+      rollList.innerHTML = '<div class="empty">The juror roll is empty.</div>';
+      rollMeta.textContent = '';
+      return;
+    }
+    var html = '<table class="roll">';
+    entries.forEach(function(p){
+      html += '<tr data-id="' + esc(p.id) + '">'
+            + '<td>' + esc(p.name) + '</td>'
+            + '<td class="actions">'
+            + '<button class="mini" data-act="edit">Edit</button>'
+            + '<button class="mini danger" data-act="del">Delete</button>'
+            + '</td></tr>';
+    });
+    html += '</table>';
+    rollList.innerHTML = html;
+    rollMeta.textContent = entries.length + ' name' + (entries.length === 1 ? '' : 's') + ' on the roll';
+  }
+
+  rollList.addEventListener('click', function(e){
+    var btn = e.target.closest('button.mini');
+    if (!btn) return;
+    var tr = btn.closest('tr');
+    var id = tr.getAttribute('data-id');
+    var entry = entries.find(function(p){ return p.id === id; });
+    if (!entry) return;
+
+    if (btn.getAttribute('data-act') === 'edit') {
+      var newName = window.prompt('Edit name:', entry.name);
+      if (newName === null) return;
+      newName = newName.replace(/\s+/g,' ').trim();
+      if (!newName) return;
+      btn.disabled = true;
+      api({ action:'edit', id:id, name:newName }).then(function(d){
+        if (d && d.ok) { entry.name = newName; renderRoll(); }
+        else fail((d && d.error) || 'Edit failed.');
+      }).catch(function(){ fail('Edit failed. Check your connection.'); });
+    }
+
+    if (btn.getAttribute('data-act') === 'del') {
+      if (!window.confirm('Delete "' + entry.name + '" from the roll?')) return;
+      btn.disabled = true;
+      api({ action:'delete', id:id }).then(function(d){
+        if (d && d.ok) {
+          entries = entries.filter(function(p){ return p.id !== id; });
+          renderRoll();
+        } else fail((d && d.error) || 'Delete failed.');
+      }).catch(function(){ fail('Delete failed. Check your connection.'); });
+    }
+  });
+
+  function refreshRoll(){
+    rollList.innerHTML = '<div class="empty">Retrieving the roll&hellip;</div>';
+    load().then(renderRoll).catch(function(){ rollList.innerHTML = ''; });
+  }
+
+  document.getElementById('toEditBtn').addEventListener('click', function(){
+    viewSelect.hidden = true;
+    viewEdit.hidden = false;
+    refreshRoll();
+  });
+  document.getElementById('backBtn').addEventListener('click', function(){
+    viewEdit.hidden = true;
+    viewSelect.hidden = false;
+    fail('');
+  });
+  document.getElementById('refreshBtn').addEventListener('click', refreshRoll);
+})();
+</script>
+</body>
+</html>
