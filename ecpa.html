@@ -3,563 +3,399 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex">
-<title>ECPA Statute — Official Download Point</title>
+<title>ECPA Statute — USTCS</title>
 <style>
-  :root{
-    --paper:#FBFAF5;
-    --ink:#16213C;
-    --rule:#C9C4B4;
-    --stamp:#9B1C1C;
-    --muted:#6B6655;
-    --field:#FFFFFF;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{-webkit-text-size-adjust:100%;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'Times New Roman', Times, Georgia, serif;
-    line-height:1.5;
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-  }
+/* ── CONFIG: Update these ── */
+:root {
+  --script-url: url; /* replaced by JS CONFIG below */
+}
 
-  /* ---------- underlying download page ---------- */
-  .page{
-    width:100%;
-    max-width:560px;
-    margin:0 auto;
-    padding:28px 20px 40px;
-    flex:1;
-  }
-  .agency{
-    text-align:center;
-    border-bottom:3px double var(--ink);
-    padding-bottom:14px;
-    margin-bottom:18px;
-  }
-  .agency .eyebrow{
-    font-family:'Courier New', Courier, monospace;
-    font-size:11px;
-    letter-spacing:.22em;
-    text-transform:uppercase;
-    color:var(--muted);
-  }
-  .agency h1{
-    font-size:21px;
-    font-weight:700;
-    letter-spacing:.04em;
-    text-transform:uppercase;
-    margin-top:6px;
-  }
-  .agency .sub{
-    font-style:italic;
-    font-size:14px;
-    color:var(--muted);
-    margin-top:4px;
-  }
-  .docbox{
-    border:1.5px solid var(--ink);
-    padding:20px 18px;
-    margin-top:22px;
-    position:relative;
-    background:#fff;
-  }
-  .docbox .formno{
-    position:absolute;
-    top:-9px;
-    left:14px;
-    background:#fff;
-    padding:0 8px;
-    font-family:'Courier New', Courier, monospace;
-    font-size:10.5px;
-    letter-spacing:.14em;
-    color:var(--muted);
-  }
-  .docbox h2{
-    font-size:17px;
-    text-transform:uppercase;
-    letter-spacing:.05em;
-    margin-bottom:8px;
-  }
-  .docbox p{
-    font-size:14.5px;
-    margin-bottom:14px;
-  }
-  .btn{
-    display:block;
-    width:100%;
-    border:1.5px solid var(--ink);
-    background:var(--ink);
-    color:#fff;
-    font-family:'Times New Roman', Times, serif;
-    font-size:16px;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    text-align:center;
-    text-decoration:none;
-    padding:14px 12px;
-    cursor:pointer;
-    -webkit-appearance:none;
-    border-radius:0;
-  }
-  .btn:active{opacity:.85;}
-  .btn.secondary{
-    background:transparent;
-    color:var(--ink);
-    border-color:var(--rule);
-    text-transform:none;
-    letter-spacing:0;
-    font-style:italic;
-    font-size:14.5px;
-    margin-top:10px;
-  }
-  .btn.danger{
-    background:transparent;
-    color:var(--stamp);
-    border-color:var(--stamp);
-    text-transform:none;
-    letter-spacing:0;
-    font-size:14.5px;
-    margin-top:10px;
-  }
-  .notice{
-    margin-top:16px;
-    font-size:12.5px;
-    color:var(--muted);
-    font-style:italic;
-    text-align:center;
-  }
-  .change-mind{
-    display:block;
-    margin-top:14px;
-    text-align:center;
-    font-size:12.5px;
-    color:var(--muted);
-    font-style:italic;
-    cursor:pointer;
-    background:none;
-    border:none;
-    width:100%;
-    text-decoration:underline;
-    text-underline-offset:2px;
-    font-family:'Times New Roman', Times, serif;
-    padding:4px 0;
-  }
-  footer{
-    text-align:center;
-    padding:16px 20px 26px;
-    font-family:'Courier New', Courier, monospace;
-    font-size:10.5px;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:var(--stamp);
-  }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ---------- survey modal ---------- */
-  .overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(22,33,60,.55);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:50;
-  }
-  .overlay[hidden]{display:none;}
-  .form-card{
-    background:var(--paper);
-    border:2px solid var(--ink);
-    width:100%;
-    max-width:430px;
-    max-height:92vh;
-    overflow-y:auto;
-    box-shadow:6px 6px 0 rgba(22,33,60,.35);
-  }
-  .form-head{
-    border-bottom:2px solid var(--ink);
-    padding:12px 16px 10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    gap:10px;
-  }
-  .form-head .fno{
-    font-family:'Courier New', Courier, monospace;
-    font-size:10.5px;
-    letter-spacing:.14em;
-    color:var(--muted);
-    white-space:nowrap;
-  }
-  .form-head .ftitle{
-    font-size:13px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.08em;
-    text-align:right;
-  }
-  .form-body{padding:18px 16px 16px;}
-  .question{
-    font-size:16.5px;
-    font-weight:700;
-    margin-bottom:14px;
-  }
-  .expect{
-    border-top:1px solid var(--rule);
-    border-bottom:1px solid var(--rule);
-    padding:12px 2px;
-    margin-bottom:16px;
-  }
-  .expect .label{
-    font-family:'Courier New', Courier, monospace;
-    font-size:10.5px;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:8px;
-  }
-  .expect p{font-size:14px;margin-bottom:10px;}
-  .expect p:last-child{margin-bottom:0;}
-  .burden{
-    margin-top:14px;
-    font-size:10.5px;
-    line-height:1.45;
-    color:var(--muted);
-    font-style:italic;
-  }
-  label.fieldlabel{
-    display:block;
-    font-family:'Courier New', Courier, monospace;
-    font-size:10.5px;
-    letter-spacing:.16em;
-    text-transform:uppercase;
-    color:var(--muted);
-    margin-bottom:6px;
-  }
-  input[type=text]{
-    width:100%;
-    border:1.5px solid var(--ink);
-    background:var(--field);
-    font-family:'Times New Roman', Times, serif;
-    font-size:17px;
-    padding:12px 10px;
-    border-radius:0;
-    -webkit-appearance:none;
-  }
-  input[type=text]:focus{outline:2px solid var(--stamp);outline-offset:1px;}
-  .err{
-    color:var(--stamp);
-    font-size:13px;
-    margin-top:8px;
-    min-height:1.2em;
-  }
-  .stamp{
-    display:inline-block;
-    border:2px solid var(--stamp);
-    color:var(--stamp);
-    font-family:'Courier New', Courier, monospace;
-    font-size:12px;
-    letter-spacing:.18em;
-    text-transform:uppercase;
-    padding:6px 12px;
-    transform:rotate(-3deg);
-    margin:4px 0 14px;
-  }
-  .stamp.voided{
-    border-color:var(--muted);
-    color:var(--muted);
-    transform:rotate(2deg);
-  }
-  .on-file-name{
-    font-weight:700;
-    font-size:15px;
-    display:block;
-    margin:8px 0 16px;
-  }
-  .confirm-name{font-weight:700;}
-  .spin{opacity:.6;pointer-events:none;}
-  @media (prefers-reduced-motion: no-preference){
-    .form-card{animation:drop .22s ease-out;}
-    @keyframes drop{from{transform:translateY(-12px);opacity:0;}to{transform:none;opacity:1;}}
-  }
+body {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  background: #0a0a0a;
+  color: #d4c9a8;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.container {
+  max-width: 520px;
+  width: 100%;
+}
+
+.seal { text-align: center; margin-bottom: 16px; }
+.seal img { width: 80px; height: 80px; opacity: 0.85; }
+
+.header {
+  text-align: center;
+  border-bottom: 2px solid #8B1A1A;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+.header h1 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c4b078;
+  margin-bottom: 4px;
+}
+.header h2 {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8a7d5a;
+}
+
+.card {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #8B1A1A;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+.card p, .card label {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #b0a68a;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #d4c9a8;
+  font-family: inherit;
+  font-size: 15px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: #8B1A1A;
+}
+
+.btn-row {
+  display: flex;
+  gap: 10px;
+}
+.btn-row button, button.full {
+  flex: 1;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border: 1px solid;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-primary {
+  background: #8B1A1A;
+  color: #e8dcc8;
+  border-color: #8B1A1A;
+}
+.btn-primary:hover { background: #a02020; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-secondary {
+  background: transparent;
+  color: #8a7d5a;
+  border-color: #333;
+}
+.btn-secondary:hover { background: #1a1a1a; color: #c4b078; }
+
+.btn-ghost {
+  background: none;
+  border: none;
+  color: #665e48;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 8px;
+  width: 100%;
+  text-align: center;
+  margin-top: 8px;
+}
+.btn-ghost:hover { color: #8B1A1A; }
+
+.code-display {
+  background: #1a1a1a;
+  border: 2px dashed #8B1A1A;
+  border-radius: 4px;
+  padding: 16px;
+  text-align: center;
+  margin: 16px 0;
+}
+.code-display .code {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #c4b078;
+  font-family: 'Courier New', monospace;
+}
+.code-display .label {
+  font-size: 11px;
+  color: #665e48;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+}
+
+.telegram-link {
+  display: block;
+  text-align: center;
+  padding: 12px;
+  background: #0088cc15;
+  border: 1px solid #0088cc40;
+  border-radius: 4px;
+  color: #0088cc;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 12px;
+}
+.telegram-link:hover { background: #0088cc25; }
+
+.step-indicator {
+  text-align: center;
+  font-size: 11px;
+  color: #665e48;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.withdrawn-stamp {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #8B1A1A;
+  border: 2px solid #8B1A1A;
+  padding: 8px;
+  transform: rotate(-2deg);
+  margin: 16px 0;
+  letter-spacing: 3px;
+}
+
+.note {
+  font-size: 12px;
+  color: #665e48;
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.hidden { display: none; }
 </style>
 </head>
 <body>
 
-<!-- ============ CONFIG — EDIT THESE TWO LINES ============ -->
-<script>
-  var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoPSy0RPMrixdJWBqjHSR1Sa_cUsg4sa8jtMul3gFVshoidDuC8I0sq1uP67zPgsIt/exec";
-  var PDF_URL    = "TBJ ECPA Statute.pdf";
-</script>
-<!-- ======================================================= -->
+<div class="container">
 
-<div class="page">
-  <div class="agency">
-    <div class="eyebrow">United States Tribunal for Civic Stability</div>
-    <h1>Office of Electoral Confidence Engagement</h1>
-    <div class="sub">Public Document Distribution Point &mdash; Deadwood, S.D.</div>
+  <!-- HEADER -->
+  <div class="header">
+    <h1>The United States Tribunal for Civic Stability</h1>
+    <h2>Office of the Court Clerk</h2>
   </div>
 
-  <div class="docbox">
-    <span class="formno">DOC. NO. 26-CR-FAKE-0001-EX</span>
-    <h2>Electoral Confidence Preservation Act</h2>
-    <p>The full text of the ECPA statute is provided below for your mandatory voluntary review. Confidence in the contents of this document is presumed upon download.</p>
-    <a class="btn" id="downloadBtn" href="#">Download the ECPA Statute</a>
-    <div class="notice" id="attestNote" hidden>Your juror attestation is on file. The Tribunal thanks you in advance for your enthusiasm.</div>
-    <button class="change-mind" id="changeMindBtn" hidden>Change your mind about being considered for jury selection?</button>
+  <!-- STEP 1: Name Entry -->
+  <div id="step-name" class="card">
+    <h3>Juror Eligibility &amp; Registration</h3>
+    <p>By providing your name below, you consent to be considered for jury selection in Case No. 26-CR-FAKE-0001.</p>
+    <input type="text" id="name-input" placeholder="Full name as you wish to be addressed">
+    <button class="full btn-primary" id="name-submit" onclick="submitName()">Submit</button>
+    <p class="note">Your name will be entered into the jury pool. You may withdraw at any time.</p>
   </div>
-</div>
 
-<footer>This is satire &mdash; not a legal document &middot; Prop / Dramatization</footer>
-
-<!-- ============ JUROR ELIGIBILITY SURVEY MODAL ============ -->
-<div class="overlay" id="overlay" hidden>
-  <div class="form-card" role="dialog" aria-modal="true" aria-labelledby="formTitle">
-    <div class="form-head">
-      <span class="fno">FORM ECE&#8209;1856&#8209;J</span>
-      <span class="ftitle" id="formTitle">Juror Eligibility Survey</span>
+  <!-- STEP 2: In Person or Virtual -->
+  <div id="step-type" class="card hidden">
+    <h3>Method of Attendance</h3>
+    <p style="text-align:center; margin-bottom:16px;">How are you attending the Great American Restoration Tour?</p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="selectType('inperson')">In Person</button>
+      <button class="btn-secondary" onclick="selectType('virtual')">Virtual</button>
     </div>
-
-    <!-- STEP 1: the question -->
-    <div class="form-body" id="step1">
-      <p class="question">Click &ldquo;Yes, I will serve&rdquo; to be eligible for Jury Selection.</p>
-      <div class="expect">
-        <div class="label">What to expect if selected</div>
-        <p>Selection will be randomized based on the responses to this survey process.</p>
-        <p>Should you be selected you will be provided further instructions at the appropriate time, but you can expect to participate on stage during the deliberation session preceding DPH Live on Saturday Night.</p>
-      </div>
-      <button class="btn" id="yesBtn">Yes, I will serve</button>
-      <button class="btn secondary" id="noBtn">Maybe Next Time</button>
-      <p class="burden">Paperwork Reduction Notice: completing this survey is estimated to require 11 seconds of civic enthusiasm. Responses are reviewed by no fewer than zero (0) federal officials.</p>
-    </div>
-
-    <!-- STEP 2: name entry -->
-    <div class="form-body" id="step2" hidden>
-      <p class="question">Record of Willing Juror</p>
-      <label class="fieldlabel" for="nameInput">Full name (as it should be read aloud)</label>
-      <input type="text" id="nameInput" maxlength="80" autocomplete="name" enterkeyhint="done">
-      <div class="err" id="nameErr"></div>
-      <button class="btn" id="submitBtn" style="margin-top:6px;">Submit Attestation</button>
-      <button class="btn secondary" id="backBtn">Go back</button>
-    </div>
-
-    <!-- STEP 3: confirmed on the roll -->
-    <div class="form-body" id="step3" hidden>
-      <div class="stamp">Received &amp; Filed</div>
-      <p class="question" style="margin-bottom:8px;">Attestation recorded.</p>
-      <p style="font-size:14.5px;margin-bottom:16px;">Thank you, <span class="confirm-name" id="confirmName"></span>. Your name has been entered into the juror roll. If selected, further instructions will reach you at the appropriate time. No further enthusiasm is required at this stage.</p>
-      <button class="btn" id="doneBtn">Proceed to the ECPA Statute</button>
-    </div>
-
-    <!-- STEP 4: remove yourself -->
-    <div class="form-body" id="step4" hidden>
-      <p class="question" style="margin-bottom:8px;">Remove from Juror Roll</p>
-      <p style="font-size:14px;margin-bottom:4px;">Your name is currently on file as:</p>
-      <span class="on-file-name" id="onFileName"></span>
-      <p style="font-size:14px;margin-bottom:0;">Removing your name will withdraw your availability for jury selection. This cannot be undone from this device.</p>
-      <div class="err" id="removeErr"></div>
-      <button class="btn danger" id="removeBtn">Remove me from the roll</button>
-      <button class="btn secondary" id="keepBtn">Keep me on the roll</button>
-    </div>
-
-    <!-- STEP 5: removal confirmed -->
-    <div class="form-body" id="step5" hidden>
-      <div class="stamp voided">Withdrawn</div>
-      <p class="question" style="margin-bottom:8px;">You have been removed.</p>
-      <p style="font-size:14.5px;margin-bottom:16px;">Your name has been withdrawn from the juror roll. Should you change your mind again, the survey link remains available on the download page.</p>
-      <button class="btn" id="removedDoneBtn">Proceed to the ECPA Statute</button>
-    </div>
-
   </div>
+
+  <!-- STEP 3a: In-Person Confirmation -->
+  <div id="step-inperson-done" class="card hidden">
+    <h3>Registration Complete</h3>
+    <p style="text-align:center; margin-bottom:16px;">You have been added to the in-person jury pool. If selected, you will be notified during the event.</p>
+    <button class="full btn-primary" onclick="downloadECPA()">Download ECPA Statute</button>
+    <button class="btn-ghost" onclick="startWithdraw()">I wish to withdraw from the jury pool</button>
+  </div>
+
+  <!-- STEP 3b: Virtual — Telegram Verification -->
+  <div id="step-virtual-link" class="card hidden">
+    <div class="step-indicator">Step 2 of 2</div>
+    <h3>Link Your Telegram</h3>
+    <p>To receive your jury summons, open a chat with the Court Clerk bot on Telegram and send the code below:</p>
+    <div class="code-display">
+      <div class="code" id="verify-code">------</div>
+      <div class="label">Verification Code</div>
+    </div>
+    <a class="telegram-link" id="telegram-link" href="https://t.me/DeadwoodTribunalCourtClerkBot" target="_blank">
+      Open @DeadwoodTribunalCourtClerkBot on Telegram
+    </a>
+    <p class="note" style="margin-top:16px;">Once verified, you will receive a confirmation in Telegram. You can then download the statute below.</p>
+    <button class="full btn-primary" onclick="downloadECPA()" style="margin-top:16px;">Download ECPA Statute</button>
+    <button class="btn-ghost" onclick="startWithdraw()">I wish to withdraw from the jury pool</button>
+  </div>
+
+  <!-- WITHDRAWN STATE -->
+  <div id="step-withdrawn" class="card hidden">
+    <div class="withdrawn-stamp">WITHDRAWN</div>
+    <p style="text-align:center;">You have been removed from the jury pool.</p>
+    <button class="btn-ghost" onclick="resetAndRestart()">I've changed my mind — re-register</button>
+  </div>
+
 </div>
 
 <script>
-(function(){
-  var FLAG     = 'tbj_attested';
-  var ID_KEY   = 'tbj_id';
-  var NAME_KEY = 'tbj_name';
+// ══════════════════════════════════════════════════════════
+//  CONFIG — paste your Apps Script deployment URL here
+// ══════════════════════════════════════════════════════════
+var CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyoPSy0RPMrixdJWBqjHSR1Sa_cUsg4sa8jtMul3gFVshoidDuC8I0sq1uP67zPgsIt/exec',
+  PDF_FILE:   'TBJ ECPA Statute.pdf'
+};
+// ══════════════════════════════════════════════════════════
 
-  var qs = new URLSearchParams(location.search);
-  if (qs.get('reset') === '1') {
-    try {
-      localStorage.removeItem(FLAG);
-      localStorage.removeItem(ID_KEY);
-      localStorage.removeItem(NAME_KEY);
-    } catch(e){}
+var state = loadState();
+
+function loadState() {
+  try {
+    var s = JSON.parse(localStorage.getItem('tbj_juror') || 'null');
+    return s || { step: 'name', id: null, name: null, type: null, code: null };
+  } catch (e) {
+    return { step: 'name', id: null, name: null, type: null, code: null };
   }
+}
 
-  var overlay      = document.getElementById('overlay');
-  var step1        = document.getElementById('step1');
-  var step2        = document.getElementById('step2');
-  var step3        = document.getElementById('step3');
-  var step4        = document.getElementById('step4');
-  var step5        = document.getElementById('step5');
-  var nameInput    = document.getElementById('nameInput');
-  var nameErr      = document.getElementById('nameErr');
-  var removeErr    = document.getElementById('removeErr');
-  var submitBtn    = document.getElementById('submitBtn');
-  var removeBtn    = document.getElementById('removeBtn');
-  var attestNote   = document.getElementById('attestNote');
-  var changeMindBtn= document.getElementById('changeMindBtn');
+function saveState() {
+  localStorage.setItem('tbj_juror', JSON.stringify(state));
+}
 
-  document.getElementById('downloadBtn').setAttribute('href', PDF_URL);
+// Check for ?reset=1
+if (new URLSearchParams(window.location.search).get('reset') === '1') {
+  localStorage.removeItem('tbj_juror');
+  state = { step: 'name', id: null, name: null, type: null, code: null };
+  window.history.replaceState({}, '', window.location.pathname);
+}
 
-  function getStored(key){ try { return localStorage.getItem(key); } catch(e){ return null; } }
-  function setStored(key,val){ try { localStorage.setItem(key,val); } catch(e){} }
-  function clearStored(){
-    try {
-      localStorage.removeItem(FLAG);
-      localStorage.removeItem(ID_KEY);
-      localStorage.removeItem(NAME_KEY);
-    } catch(e){}
-  }
+// Render correct step on load
+renderStep();
 
-  var attested = getStored(FLAG) === '1';
+function renderStep() {
+  document.querySelectorAll('.card').forEach(function(c) { c.classList.add('hidden'); });
 
-  function showChangeMind(){ changeMindBtn.hidden = false; }
-
-  if (attested) {
-    attestNote.hidden = false;
-    showChangeMind();
+  if (state.step === 'withdrawn') {
+    document.getElementById('step-withdrawn').classList.remove('hidden');
+  } else if (state.step === 'type') {
+    document.getElementById('step-type').classList.remove('hidden');
+  } else if (state.step === 'done-inperson') {
+    document.getElementById('step-inperson-done').classList.remove('hidden');
+  } else if (state.step === 'done-virtual') {
+    document.getElementById('verify-code').textContent = state.code || '------';
+    document.getElementById('step-virtual-link').classList.remove('hidden');
   } else {
-    overlay.hidden = false;
+    document.getElementById('step-name').classList.remove('hidden');
   }
+}
 
-  function show(step){
-    [step1,step2,step3,step4,step5].forEach(function(s){ s.hidden = true; });
-    step.hidden = false;
-  }
+function submitName() {
+  var name = document.getElementById('name-input').value.trim();
+  if (!name) return;
+  state.name = name;
+  state.step = 'type';
+  saveState();
+  renderStep();
+}
 
-  function closeModal(){
-    overlay.hidden = true;
-    showChangeMind();
-  }
+function selectType(type) {
+  state.type = type;
+  var btn = event.target;
+  btn.disabled = true;
+  btn.textContent = 'Registering…';
 
-  // ── Step 1 ──────────────────────────────────────────────────────
-  document.getElementById('noBtn').addEventListener('click', closeModal);
-
-  document.getElementById('yesBtn').addEventListener('click', function(){
-    show(step2);
-    setTimeout(function(){ nameInput.focus(); }, 60);
-  });
-
-  // ── Step 2 ──────────────────────────────────────────────────────
-  document.getElementById('backBtn').addEventListener('click', function(){
-    nameErr.textContent = '';
-    show(step1);
-  });
-
-  function submit(){
-    var name = nameInput.value.replace(/\s+/g,' ').trim();
-    if (!name) { nameErr.textContent = 'A name is required to serve.'; return; }
-    nameErr.textContent = '';
-    submitBtn.classList.add('spin');
-    submitBtn.textContent = 'Filing\u2026';
-
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'add', name: name }),
-      redirect: 'follow'
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if (data && data.ok) {
-        setStored(FLAG, '1');
-        setStored(ID_KEY, data.id);
-        setStored(NAME_KEY, name);
-        document.getElementById('confirmName').textContent = name;
-        attestNote.hidden = false;
-        show(step3);
-      } else {
-        throw new Error((data && data.error) || 'Filing failed.');
-      }
-    })
-    .catch(function(){
-      nameErr.textContent = 'The clerk could not be reached. Check your connection and try again.';
-    })
-    .finally(function(){
-      submitBtn.classList.remove('spin');
-      submitBtn.textContent = 'Submit Attestation';
-    });
-  }
-
-  submitBtn.addEventListener('click', submit);
-  nameInput.addEventListener('keydown', function(e){
-    if (e.key === 'Enter') { e.preventDefault(); submit(); }
-  });
-
-  // ── Step 3 ──────────────────────────────────────────────────────
-  document.getElementById('doneBtn').addEventListener('click', closeModal);
-
-  // ── "Change your mind" link ──────────────────────────────────────
-  changeMindBtn.addEventListener('click', function(){
-    removeErr.textContent = '';
-    if (getStored(FLAG) === '1') {
-      // already on the roll — offer removal
-      var storedName = getStored(NAME_KEY) || 'your name';
-      document.getElementById('onFileName').textContent = storedName;
-      show(step4);
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'add', name: state.name, type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (!data.ok) throw new Error(data.error || 'Registration failed.');
+    state.id = data.id;
+    if (type === 'virtual') {
+      state.code = data.code;
+      state.step = 'done-virtual';
     } else {
-      // not on the roll — reopen the sign-up survey
-      nameInput.value = '';
-      nameErr.textContent = '';
-      show(step1);
+      state.step = 'done-inperson';
     }
-    overlay.hidden = false;
+    saveState();
+    renderStep();
+  })
+  .catch(function(err) {
+    alert('Error: ' + err.message);
+    btn.disabled = false;
+    btn.textContent = type === 'virtual' ? 'Virtual' : 'In Person';
   });
+}
 
-  // ── Step 4 ──────────────────────────────────────────────────────
-  document.getElementById('keepBtn').addEventListener('click', closeModal);
+function downloadECPA() {
+  var url = './' + encodeURIComponent(CONFIG.PDF_FILE);
+  window.open(url, '_blank');
+}
 
-  removeBtn.addEventListener('click', function(){
-    var id = getStored(ID_KEY);
-    if (!id) {
-      // no ID stored — already gone or edge case; just clear and confirm
-      clearStored();
-      attestNote.hidden = true;
-      show(step5);
-      return;
-    }
-    removeErr.textContent = '';
-    removeBtn.classList.add('spin');
-    removeBtn.textContent = 'Removing\u2026';
+function startWithdraw() {
+  if (!confirm('Are you sure you want to withdraw from the jury pool? You can re-register later if you change your mind.')) return;
 
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'delete', id: id }),
-      redirect: 'follow'
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(data){
-      if (data && data.ok) {
-        clearStored();
-        attestNote.hidden = true;
-        show(step5);
-      } else {
-        throw new Error((data && data.error) || 'Removal failed.');
-      }
-    })
-    .catch(function(){
-      removeErr.textContent = 'The clerk could not be reached. Check your connection and try again.';
-    })
-    .finally(function(){
-      removeBtn.classList.remove('spin');
-      removeBtn.textContent = 'Remove me from the roll';
-    });
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'withdraw', id: state.id, type: state.type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    state.step = 'withdrawn';
+    saveState();
+    renderStep();
+  })
+  .catch(function(err) {
+    alert('Error withdrawing. Please try again.');
   });
+}
 
-  // ── Step 5 ──────────────────────────────────────────────────────
-  document.getElementById('removedDoneBtn').addEventListener('click', function(){
-    changeMindBtn.hidden = false; // still available in case they change again
-    closeModal();
-  });
-
-})();
+function resetAndRestart() {
+  localStorage.removeItem('tbj_juror');
+  state = { step: 'name', id: null, name: null, type: null, code: null };
+  renderStep();
+}
 </script>
+
 </body>
 </html>
