@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Jury Administration</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Times New Roman', 'Georgia', serif;
+  background: #0a0a0a;
+  color: #d4c9a8;
+  min-height: 100vh;
+  padding: 24px 16px;
+}
+
+.container { max-width: 640px; margin: 0 auto; }
+
+.header {
+  text-align: center;
+  border-bottom: 2px solid #8B1A1A;
+  padding-bottom: 14px;
+  margin-bottom: 20px;
+}
+.header h1 {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #c4b078;
+}
+.header h2 {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8a7d5a;
+  margin-top: 4px;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #665e48;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab.active {
+  color: #c4b078;
+  border-bottom-color: #8B1A1A;
+}
+.tab:hover { color: #c4b078; }
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+.card {
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.card h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #8B1A1A;
+  margin-bottom: 12px;
+}
+
+.juror-list { list-style: none; }
+.juror-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 14px;
+}
+.juror-list li:last-child { border-bottom: none; }
+
+.juror-num {
+  color: #665e48;
+  font-size: 12px;
+  min-width: 28px;
+}
+.juror-name {
+  flex: 1;
+  margin-left: 8px;
+}
+.juror-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-left: 8px;
+}
+.badge-linked { background: #0088cc30; color: #0088cc; }
+.badge-unlinked { background: #8B1A1A30; color: #8B1A1A; }
+.badge-voted { background: #2a6e2a30; color: #4a9e4a; }
+.badge-selected { background: #c4b07830; color: #c4b078; }
+.badge-guilty { background: #8B1A1A40; color: #cc3333; }
+.badge-not-guilty { background: #2a6e2a40; color: #4a9e4a; }
+
+.juror-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: 8px;
+}
+.juror-actions button {
+  background: none;
+  border: 1px solid #333;
+  color: #665e48;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.juror-actions button:hover { color: #8B1A1A; border-color: #8B1A1A; }
+
+button.action {
+  padding: 10px 16px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.action-primary {
+  background: #8B1A1A;
+  color: #e8dcc8;
+  border: 1px solid #8B1A1A;
+}
+.action-primary:hover { background: #a02020; }
+.action-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.action-secondary {
+  background: transparent;
+  color: #8a7d5a;
+  border: 1px solid #333;
+}
+.action-secondary:hover { background: #1a1a1a; color: #c4b078; }
+
+.action-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.count {
+  font-size: 12px;
+  color: #665e48;
+  margin-bottom: 12px;
+}
+
+.draw-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.draw-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.draw-controls label {
+  font-size: 12px;
+  color: #8a7d5a;
+}
+.draw-controls input[type="number"] {
+  width: 60px;
+  padding: 6px 8px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 3px;
+  color: #d4c9a8;
+  font-family: inherit;
+  font-size: 14px;
+  text-align: center;
+}
+.draw-controls input[type="number"]:focus { outline: none; border-color: #8B1A1A; }
+
+.status-msg {
+  font-size: 12px;
+  color: #c4b078;
+  padding: 8px 12px;
+  background: #c4b07815;
+  border-radius: 3px;
+  margin-top: 12px;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.results-table th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #665e48;
+  text-align: left;
+  padding: 6px 0;
+  border-bottom: 1px solid #333;
+}
+.results-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+.verdict-summary {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+}
+.verdict-box {
+  flex: 1;
+  text-align: center;
+  padding: 16px;
+  border-radius: 4px;
+}
+.verdict-box.guilty { background: #8B1A1A20; border: 1px solid #8B1A1A40; }
+.verdict-box.not-guilty { background: #2a6e2a20; border: 1px solid #2a6e2a40; }
+.verdict-box .num {
+  font-size: 32px;
+  font-weight: 700;
+}
+.verdict-box.guilty .num { color: #cc3333; }
+.verdict-box.not-guilty .num { color: #4a9e4a; }
+.verdict-box .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #665e48;
+  margin-top: 4px;
+}
+
+.empty { color: #665e48; font-style: italic; font-size: 13px; text-align: center; padding: 20px; }
+
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>Jury Administration Console</h1>
+    <h2>Case No. 26-CR-FAKE-0001</h2>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" data-panel="panel-inperson" onclick="switchTab(this)">In Person</div>
+    <div class="tab" data-panel="panel-virtual" onclick="switchTab(this)">Virtual</div>
+    <div class="tab" data-panel="panel-verdicts" onclick="switchTab(this)">Verdicts</div>
+  </div>
+
+  <!-- ═══ IN-PERSON PANEL ═══ -->
+  <div id="panel-inperson" class="panel active">
+    <div class="card">
+      <h3>In-Person Jury Pool</h3>
+      <div class="count" id="ip-count">Loading…</div>
+      <ul class="juror-list" id="ip-list"></ul>
+    </div>
+    <div class="card">
+      <div class="draw-section">
+        <h3>Jury Draw</h3>
+        <div class="draw-controls">
+          <label>Draw</label>
+          <input type="number" id="ip-draw-count" value="18" min="1" max="50">
+          <label>names</label>
+          <button class="action action-primary" onclick="drawInPerson()">Shuffle &amp; Draw</button>
+        </div>
+        <ul class="juror-list" id="ip-draw-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VIRTUAL PANEL ═══ -->
+  <div id="panel-virtual" class="panel">
+    <div class="card">
+      <h3>Virtual Jury Pool</h3>
+      <div class="count" id="vt-count">Loading…</div>
+      <ul class="juror-list" id="vt-list"></ul>
+    </div>
+    <div class="card">
+      <div class="draw-section">
+        <h3>Virtual Jury Draw</h3>
+        <div class="draw-controls">
+          <label>Draw</label>
+          <input type="number" id="vt-draw-count" value="12" min="1" max="50">
+          <label>names</label>
+          <button class="action action-primary" onclick="drawVirtual()">Shuffle &amp; Draw</button>
+        </div>
+        <ul class="juror-list" id="vt-draw-list"></ul>
+        <div id="vt-summons-area" class="hidden" style="margin-top:16px;">
+          <div class="action-row">
+            <button class="action action-primary" id="btn-send-summons" onclick="sendSummons()">Send Jury Summons via Telegram</button>
+          </div>
+          <div id="summons-status"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VERDICTS PANEL ═══ -->
+  <div id="panel-verdicts" class="panel">
+    <div class="card">
+      <h3>Verdict Results</h3>
+      <button class="action action-secondary" onclick="loadVerdicts()" style="margin-bottom:16px;">Refresh</button>
+      <div class="verdict-summary" id="verdict-summary" style="display:none;">
+        <div class="verdict-box guilty">
+          <div class="num" id="guilty-count">0</div>
+          <div class="label">Guilty</div>
+        </div>
+        <div class="verdict-box not-guilty">
+          <div class="num" id="not-guilty-count">0</div>
+          <div class="label">Not Guilty</div>
+        </div>
+      </div>
+      <table class="results-table" id="results-table" style="margin-top:16px;">
+        <thead><tr><th>Juror</th><th>Verdict</th><th>Time</th></tr></thead>
+        <tbody id="results-body"></tbody>
+      </table>
+      <div class="empty hidden" id="no-votes">No verdicts cast yet.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  CONFIG — paste your Apps Script deployment URL here
+// ══════════════════════════════════════════════════════════
+var CONFIG = {
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyoPSy0RPMrixdJWBqjHSR1Sa_cUsg4sa8jtMul3gFVshoidDuC8I0sq1uP67zPgsIt/exec'
+};
+// ══════════════════════════════════════════════════════════
+
+var ipData = [];
+var vtData = [];
+var vtDrawIds = [];
+
+// ── TAB SWITCHING ──
+
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById(el.dataset.panel).classList.add('active');
+}
+
+// ── LOAD DATA ──
+
+function loadAll() {
+  fetch(CONFIG.SCRIPT_URL + '?action=list&type=all')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.ok) throw new Error('Load failed');
+      ipData = data.data.inperson || [];
+      vtData = data.data.virtual || [];
+      renderInPerson();
+      renderVirtual();
+    })
+    .catch(function(err) {
+      console.error(err);
+    });
+}
+
+loadAll();
+
+// ── IN-PERSON RENDERING ──
+
+function renderInPerson() {
+  document.getElementById('ip-count').textContent = ipData.length + ' registered';
+  var list = document.getElementById('ip-list');
+  if (!ipData.length) {
+    list.innerHTML = '<div class="empty">No in-person jurors registered.</div>';
+    return;
+  }
+  list.innerHTML = ipData.map(function(j, i) {
+    return '<li>'
+      + '<span class="juror-num">' + (i + 1) + '.</span>'
+      + '<span class="juror-name">' + esc(j.name) + '</span>'
+      + '<div class="juror-actions">'
+      + '<button onclick="editJuror(\'' + j.id + '\', \'inperson\')">edit</button>'
+      + '<button onclick="deleteJuror(\'' + j.id + '\', \'inperson\')">×</button>'
+      + '</div></li>';
+  }).join('');
+}
+
+function drawInPerson() {
+  var n = parseInt(document.getElementById('ip-draw-count').value) || 18;
+  var pool = ipData.slice();
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  }
+  var drawn = pool.slice(0, Math.min(n, pool.length));
+  var list = document.getElementById('ip-draw-list');
+  if (!drawn.length) {
+    list.innerHTML = '<div class="empty">No jurors to draw from.</div>';
+    return;
+  }
+  var panelSize = Math.min(12, drawn.length);
+  list.innerHTML = drawn.map(function(j, i) {
+    var role = i < panelSize ? '' : ' <span class="juror-badge badge-selected">ALT</span>';
+    return '<li><span class="juror-num">' + (i + 1) + '.</span>'
+      + '<span class="juror-name">' + esc(j.name) + role + '</span></li>';
+  }).join('');
+}
+
+// ── VIRTUAL RENDERING ──
+
+function renderVirtual() {
+  document.getElementById('vt-count').textContent = vtData.length + ' registered';
+  var list = document.getElementById('vt-list');
+  if (!vtData.length) {
+    list.innerHTML = '<div class="empty">No virtual jurors registered.</div>';
+    return;
+  }
+  list.innerHTML = vtData.map(function(j, i) {
+    var badges = '';
+    if (j.linked) badges += '<span class="juror-badge badge-linked">TG</span>';
+    else badges += '<span class="juror-badge badge-unlinked">no TG</span>';
+    if (j.selected) badges += '<span class="juror-badge badge-selected">selected</span>';
+    if (j.hasVoted) {
+      var vc = j.vote === 'guilty' ? 'badge-guilty' : 'badge-not-guilty';
+      badges += '<span class="juror-badge ' + vc + '">' + (j.vote === 'guilty' ? 'G' : 'NG') + '</span>';
+    }
+    return '<li>'
+      + '<span class="juror-num">' + (i + 1) + '.</span>'
+      + '<span class="juror-name">' + esc(j.name) + badges + '</span>'
+      + '<div class="juror-actions">'
+      + '<button onclick="editJuror(\'' + j.id + '\', \'virtual\')">edit</button>'
+      + '<button onclick="deleteJuror(\'' + j.id + '\', \'virtual\')">×</button>'
+      + '</div></li>';
+  }).join('');
+}
+
+function drawVirtual() {
+  var n = parseInt(document.getElementById('vt-draw-count').value) || 12;
+  var pool = vtData.slice();
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  }
+  var drawn = pool.slice(0, Math.min(n, pool.length));
+  vtDrawIds = drawn.map(function(j) { return j.id; });
+
+  var list = document.getElementById('vt-draw-list');
+  if (!drawn.length) {
+    list.innerHTML = '<div class="empty">No virtual jurors to draw from.</div>';
+    document.getElementById('vt-summons-area').classList.add('hidden');
+    return;
+  }
+
+  list.innerHTML = drawn.map(function(j, i) {
+    var badges = '';
+    if (j.linked) badges += '<span class="juror-badge badge-linked">TG</span>';
+    else badges += '<span class="juror-badge badge-unlinked">no TG</span>';
+    return '<li><span class="juror-num">' + (i + 1) + '.</span>'
+      + '<span class="juror-name">' + esc(j.name) + badges + '</span></li>';
+  }).join('');
+
+  var unlinked = drawn.filter(function(j) { return !j.linked; }).length;
+  document.getElementById('vt-summons-area').classList.remove('hidden');
+  var statusEl = document.getElementById('summons-status');
+  if (unlinked > 0) {
+    statusEl.innerHTML = '<div class="status-msg">⚠️ ' + unlinked + ' juror' + (unlinked > 1 ? 's have' : ' has') + ' not linked Telegram. They will not receive a summons.</div>';
+  } else {
+    statusEl.innerHTML = '';
+  }
+}
+
+function sendSummons() {
+  if (!vtDrawIds.length) return;
+  if (!confirm('Send jury summons via Telegram to ' + vtDrawIds.length + ' selected virtual jurors?')) return;
+
+  var btn = document.getElementById('btn-send-summons');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'select', ids: vtDrawIds })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    btn.disabled = false;
+    btn.textContent = 'Send Jury Summons via Telegram';
+    if (!data.ok) throw new Error('Failed');
+
+    var sent = data.results.filter(function(r) { return r.sent; }).length;
+    var failed = data.results.filter(function(r) { return !r.sent; });
+    var statusEl = document.getElementById('summons-status');
+    var html = '<div class="status-msg">✅ ' + sent + ' summons sent.';
+    if (failed.length) {
+      html += '<br>⚠️ ' + failed.length + ' not sent:';
+      failed.forEach(function(f) {
+        html += '<br>— ' + esc(f.name || f.id) + ': ' + esc(f.reason);
+      });
+    }
+    html += '</div>';
+    statusEl.innerHTML = html;
+    loadAll(); // refresh data
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = 'Send Jury Summons via Telegram';
+    alert('Error sending summons: ' + err.message);
+  });
+}
+
+// ── VERDICTS ──
+
+function loadVerdicts() {
+  fetch(CONFIG.SCRIPT_URL + '?action=results')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.ok) throw new Error('Failed');
+      var votes = data.votes || [];
+      var tbody = document.getElementById('results-body');
+      var noVotes = document.getElementById('no-votes');
+      var summary = document.getElementById('verdict-summary');
+
+      if (!votes.length) {
+        tbody.innerHTML = '';
+        noVotes.classList.remove('hidden');
+        summary.style.display = 'none';
+        return;
+      }
+
+      noVotes.classList.add('hidden');
+      summary.style.display = 'flex';
+
+      var guiltyN = votes.filter(function(v) { return v.vote === 'guilty'; }).length;
+      var ngN = votes.filter(function(v) { return v.vote === 'not_guilty'; }).length;
+      document.getElementById('guilty-count').textContent = guiltyN;
+      document.getElementById('not-guilty-count').textContent = ngN;
+
+      tbody.innerHTML = votes.map(function(v) {
+        var cls = v.vote === 'guilty' ? 'badge-guilty' : 'badge-not-guilty';
+        var label = v.vote === 'guilty' ? 'GUILTY' : 'NOT GUILTY';
+        var time = v.timestamp ? new Date(v.timestamp).toLocaleString() : '';
+        return '<tr><td>' + esc(v.name) + '</td>'
+          + '<td><span class="juror-badge ' + cls + '">' + label + '</span></td>'
+          + '<td style="font-size:12px;color:#665e48;">' + time + '</td></tr>';
+      }).join('');
+    })
+    .catch(function(err) {
+      console.error(err);
+    });
+}
+
+// ── EDIT / DELETE ──
+
+function editJuror(id, type) {
+  var newName = prompt('Enter new name:');
+  if (!newName || !newName.trim()) return;
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'edit', id: id, name: newName.trim(), type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { loadAll(); })
+  .catch(function(err) { alert('Error: ' + err.message); });
+}
+
+function deleteJuror(id, type) {
+  if (!confirm('Remove this juror from the pool?')) return;
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'delete', id: id, type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function() { loadAll(); })
+  .catch(function(err) { alert('Error: ' + err.message); });
+}
+
+function esc(s) {
+  var el = document.createElement('span');
+  el.textContent = s;
+  return el.innerHTML;
+}
+</script>
+
+</body>
+</html>
