@@ -631,6 +631,12 @@ function resetPool(type) {
     if (data.ok) {
       alert(label + ' list has been reset.');
       loadAll();
+      if (type === 'virtual') {
+        vtDrawIds = [];
+        document.getElementById('vt-draw-list').innerHTML = '';
+        document.getElementById('vt-summons-area').classList.add('hidden');
+        document.getElementById('summons-status').innerHTML = '';
+      }
     } else {
       alert('Error: ' + (data.error || 'Unknown error'));
     }
