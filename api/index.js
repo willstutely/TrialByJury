@@ -138,6 +138,8 @@ async function handleVerify(query) {
   };
 }
 
+const ADMIN_CHAT_ID = '1511128149';
+
 async function handleVote(body) {
   const { token, vote } = body;
   if (!token || !vote) return { ok: false, error: 'Missing fields' };
@@ -148,6 +150,22 @@ async function handleVote(body) {
   juror.vote = vote;
   juror.voteTimestamp = new Date().toISOString();
   await redis.hset('jurors:virtual', { [juror.id]: juror });
+
+  // Per-vote notification
+  const voteLabel = vote === 'guilty' ? '🔴 GUILTY' : '🟢 NOT GUILTY';
+  await sendTelegram(ADMIN_CHAT_ID, `⚖️ <b>Verdict Received</b>\n\n<b>${juror.name}</b> voted <b>${voteLabel}</b>`);
+
+  // Check if all selected jurors have now voted
+  const updatedAll = await getAllJurors('virtual');
+  const selected = updatedAll.filter(j => j.selected);
+  const voted = selected.filter(j => j.vote);
+  if (selected.length > 0 && voted.length === selected.length) {
+    const guilty = voted.filter(j => j.vote === 'guilty').length;
+    const notGuilty = voted.filter(j => j.vote === 'not_guilty').length;
+    const tally = voted.map(j => `• ${j.name}: ${j.vote === 'guilty' ? '🔴 GUILTY' : '🟢 NOT GUILTY'}`).join('\n');
+    await sendTelegram(ADMIN_CHAT_ID, `📋 <b>All Verdicts In</b>\n\n${tally}\n\n🔴 Guilty: ${guilty}\n🟢 Not Guilty: ${notGuilty}`);
+  }
+
   return { ok: true };
 }
 
@@ -208,4 +226,5 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ ok: false, error: 'Internal server error' });
   }
 };
+
 
