@@ -189,6 +189,13 @@ async function handleResults() {
   return { ok: true, votes };
 }
 
+async function handleReset(body) {
+  const { type } = body;
+  if (type !== 'inperson' && type !== 'virtual') return { ok: false, error: 'Invalid type' };
+  await redis.del(`jurors:${type}`);
+  return { ok: true };
+}
+
 // ── Router ─────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -217,6 +224,7 @@ module.exports = async function handler(req, res) {
       if (action === 'select') return res.json(await handleSelect(body));
       if (action === 'vote') return res.json(await handleVote(body));
       if (action === 'decline') return res.json(await handleDecline(body));
+      if (action === 'reset') return res.json(await handleReset(body));
       return res.json({ ok: false, error: 'Unknown action' });
     }
 
@@ -226,5 +234,6 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ ok: false, error: 'Internal server error' });
   }
 };
+
 
 
