@@ -159,6 +159,8 @@ button.action {
   border: 1px solid #333;
 }
 .action-secondary:hover { background: #1a1a1a; color: #c4b078; }
+.action-danger { background: #2a1a1a; color: #cc4444; border: 1px solid #5a2222; font-size: 11px; padding: 6px 12px; }
+.action-danger:hover { background: #3a1a1a; }
 
 .action-row {
   display: flex;
@@ -278,7 +280,10 @@ button.action {
   <!-- ═══ IN-PERSON PANEL ═══ -->
   <div id="panel-inperson" class="panel active">
     <div class="card">
-      <h3>In-Person Jury Pool</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <h3>In-Person Jury Pool</h3>
+        <button class="action action-danger" onclick="resetPool('inperson')">Reset List</button>
+      </div>
       <div class="count" id="ip-count">Loading…</div>
       <ul class="juror-list" id="ip-list"></ul>
     </div>
@@ -299,7 +304,10 @@ button.action {
   <!-- ═══ VIRTUAL PANEL ═══ -->
   <div id="panel-virtual" class="panel">
     <div class="card">
-      <h3>Virtual Jury Pool</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <h3>Virtual Jury Pool</h3>
+        <button class="action action-danger" onclick="resetPool('virtual')">Reset List</button>
+      </div>
       <div class="count" id="vt-count">Loading…</div>
       <ul class="juror-list" id="vt-list"></ul>
     </div>
@@ -609,8 +617,29 @@ function esc(s) {
   el.textContent = s;
   return el.innerHTML;
 }
+
+function resetPool(type) {
+  var label = type === 'inperson' ? 'In-Person' : 'Virtual';
+  if (!confirm('Reset the ' + label + ' jury list? This permanently deletes all entries and cannot be undone.')) return;
+  fetch(CONFIG.SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: 'reset', type: type })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.ok) {
+      alert(label + ' list has been reset.');
+      loadData();
+    } else {
+      alert('Error: ' + (data.error || 'Unknown error'));
+    }
+  })
+  .catch(function(err) { alert('Request failed: ' + err.message); });
+}
 </script>
 
 </body>
 </html>
+
 
