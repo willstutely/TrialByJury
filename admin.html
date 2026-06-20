@@ -630,7 +630,7 @@ function resetPool(type) {
   .then(function(data) {
     if (data.ok) {
       alert(label + ' list has been reset.');
-      loadData();
+      loadAll();
     } else {
       alert('Error: ' + (data.error || 'Unknown error'));
     }
