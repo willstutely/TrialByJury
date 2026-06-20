@@ -1,8 +1,8 @@
 const { Redis } = require('@upstash/redis');
 
 const redis = new Redis({
-  url: process.env.STORAGE_REST_API_URL,
-  token: process.env.STORAGE_REST_API_TOKEN,
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
 });
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -87,3 +87,4 @@ module.exports = async function handler(req, res) {
     return res.status(200).send('OK'); // Always 200 so Telegram doesn't retry
   }
 };
+
