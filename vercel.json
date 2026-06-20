@@ -1,1 +1,10 @@
-{"installCommand":"npm install"}
+{
+  "installCommand": "npm install",
+  "trailingSlash": false,
+  "routes": [
+    { "src": "/api/telegram", "dest": "/api/telegram.js" },
+    { "src": "/api/setup-webhook", "dest": "/api/setup-webhook.js" },
+    { "src": "/api/debug", "dest": "/api/debug.js" },
+    { "src": "/api/(.*)", "dest": "/api/index.js" }
+  ]
+}
