@@ -2,8 +2,8 @@ const { Redis } = require('@upstash/redis');
 const crypto = require('crypto');
 
 const redis = new Redis({
-  url: process.env.STORAGE_REST_API_URL,
-  token: process.env.STORAGE_REST_API_TOKEN,
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
 });
 
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
@@ -208,3 +208,4 @@ module.exports = async function handler(req, res) {
     res.status(500).json({ ok: false, error: 'Internal server error' });
   }
 };
+
