@@ -1,10 +1,10 @@
 const TELEGRAM_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const BASE_URL = process.env.BASE_URL || 'https://badlandstbj.com';
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).send('GET only');
 
-  const webhookUrl = `${BASE_URL}/api/telegram`;
+  const base = req.query.base || 'https://trial-by-jury.vercel.app';
+  const webhookUrl = `${base}/api/telegram`;
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/setWebhook?url=${encodeURIComponent(webhookUrl)}&drop_pending_updates=true`;
 
   try {
