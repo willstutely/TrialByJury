@@ -51,9 +51,8 @@ module.exports = async function handler(req, res) {
       return res.status(200).send('OK');
     }
 
-    // Handle /start command
+    // Handle /start command — silent, no reply needed
     if (text.toLowerCase() === '/start') {
-      await sendTelegram(chatId, '⚖️ <b>Deadwood Tribunal Court Clerk</b>\n\nSend your 6-character verification code to link your jury registration.\n\n<i>The only rule is that you must follow the rules.</i>');
       return res.status(200).send('OK');
     }
 
@@ -87,4 +86,5 @@ module.exports = async function handler(req, res) {
     return res.status(200).send('OK'); // Always 200 so Telegram doesn't retry
   }
 };
+
 
