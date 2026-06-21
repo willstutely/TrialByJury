@@ -154,6 +154,11 @@ input[type="text"]:focus {
   letter-spacing: 6px;
   color: #c4b078;
   font-family: 'Courier New', monospace;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.code-display .code:active, .code-display .code.copied {
+  color: #7ecb7e;
 }
 .code-display .label {
   font-size: 11px;
@@ -250,14 +255,11 @@ input[type="text"]:focus {
   <div id="step-virtual-link" class="card hidden">
     <div class="step-indicator">Step 2 of 2</div>
     <h3>Link Your Telegram</h3>
-    <p>To receive your jury summons, open a chat with the Court Clerk bot on Telegram and send the code below:</p>
+    <p>Tap your verification code below to copy it, then open Telegram and paste it to the Court Clerk bot.</p>
     <div class="code-display">
-      <div class="code" id="verify-code">------</div>
-      <div class="label">Verification Code</div>
+      <div class="code" id="verify-code" onclick="copyAndOpen()">------</div>
+      <div class="label" id="code-label">Tap code to copy &amp; open Telegram</div>
     </div>
-    <a class="telegram-link" id="telegram-link" href="https://t.me/DeadwoodTribunalCourtClerkBot" target="_blank">
-      Open @DeadwoodTribunalCourtClerkBot on Telegram
-    </a>
     <p class="note" style="margin-top:16px;">Once verified, you will receive a confirmation in Telegram. You can then download the statute below.</p>
     <button class="full btn-primary" onclick="downloadECPA()" style="margin-top:16px;">Download ECPA Statute</button>
     <button class="btn-ghost" onclick="startWithdraw()">I wish to withdraw from the jury pool</button>
@@ -365,6 +367,41 @@ function selectType(type) {
   });
 }
 
+function copyAndOpen() {
+  var code = document.getElementById('verify-code').textContent.trim();
+  if (!code || code === '------') return;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(code).then(function() {
+    var el = document.getElementById('verify-code');
+    var label = document.getElementById('code-label');
+    el.classList.add('copied');
+    label.textContent = 'Copied!';
+    setTimeout(function() {
+      el.classList.remove('copied');
+      label.textContent = 'Tap code to copy & open Telegram';
+    }, 1500);
+  }).catch(function() {
+    // Fallback for older browsers
+    var ta = document.createElement('textarea');
+    ta.value = code;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+
+  // Prompt to open Telegram
+  var open = window.confirm('Code copied!
+
+Open Telegram now?
+
+Paste the code and send it to @DeadwoodTribunalCourtClerkBot to complete your registration.');
+  if (open) {
+    window.location.href = 'https://t.me/DeadwoodTribunalCourtClerkBot';
+  }
+}
+
 function downloadECPA() {
   var url = './' + encodeURIComponent(CONFIG.PDF_FILE);
   window.open(url, '_blank');
@@ -399,4 +436,5 @@ function resetAndRestart() {
 
 </body>
 </html>
+
 
