@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
       if (juror) {
         juror.chatId = chatId;
         await redis.hset('jurors:virtual', { [juror.id]: juror });
-        await sendTelegram(chatId, `✅ Verified! You are registered as <b>${juror.name}</b> in the virtual jury pool.\n\nYou will receive a summons here if selected.\n\n<i>The only rule is that you must follow the rules.</i>`);
+        await sendTelegram(chatId, `✅ Verified! You are registered as <b>${juror.name}</b> in the virtual jury pool.\n\nYou will receive a summons here if selected.\n\nSend /remove to be removed from the jury pool.\n\n<i>The only rule is that you must follow the rules.</i>`);
       } else {
         // Check if code exists but is already linked
         const alreadyLinked = jurors.find(j => j.code === code && j.chatId);
@@ -86,5 +86,6 @@ module.exports = async function handler(req, res) {
     return res.status(200).send('OK'); // Always 200 so Telegram doesn't retry
   }
 };
+
 
 
